@@ -2,3 +2,12 @@
 - name: Add the OS specific variables
   include_vars: "{{ ansible_facts['os_family'] }}.yml"
 - include_tasks: "tomcat-setup-{{ ansible_facts['os_family'] }}.yml"
+- name: Configurar ruta webapps para RedHat/CentOS
+  set_fact:
+    tomcat_webapps_path: "/var/lib/tomcat9/webapps"
+  when: ansible_os_family == "RedHat"
+
+- name: Configurar ruta webapps para Debian/Ubuntu
+  set_fact:
+    tomcat_webapps_path: "/opt/tomcat/webapps"
+  when: ansible_os_family == "Debian"

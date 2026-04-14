@@ -86,3 +86,19 @@
     - "{{ tomcat_install_path }}/webapps/host-manager/META-INF/context.xml"
     - "{{ tomcat_install_path }}/webapps/manager/META-INF/context.xml"
   notify: restart tomcat
+
+- name: Despliegue del artefacto WAR
+  block:
+    - name: Descargar y copiar el artefacto desde Artifactory
+      get_url:
+        url: "{{ war_from_artifactory_url }}"
+        dest: "{{ tomcat_webapps_path }}/{{ app_name }}.war"
+        owner: tomcat
+        group: tomcat
+        mode: '0644'
+      notify: restart_tomcat
+
+  # Esta es la condición clave que pediste
+  when:
+    - deploy_artifact | bool
+    - war_from_artifactory_url != ""
